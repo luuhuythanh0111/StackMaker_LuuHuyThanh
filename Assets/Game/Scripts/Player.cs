@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -8,6 +9,7 @@ public class Player : MonoBehaviour
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private Vector3 targetPosition;
     [SerializeField] private float speed = 5;
+    [SerializeField] private GameObject openChess; 
 
     private const int left = 0;
     private const int right = 1;
@@ -15,14 +17,14 @@ public class Player : MonoBehaviour
     private const int back = 3;
     private const int stay = 4;
 
-    private Stack <int> brickStack = new Stack<int>();
+    private Stack <Collider> brickStack = new Stack<Collider>();
 
     private Vector3 previousMousePosition = new Vector3(0, 0, 0);
     private Vector3 rayShootPosition;
     private Vector3 groundPosition;
 
     private bool isMoving = false;
-
+    private bool isFinish = false;
 
     void Start()
     {
@@ -32,6 +34,8 @@ public class Player : MonoBehaviour
     void Update()
     {
         //Debug.Log(isMoving);
+
+        if(isFinish) return;
 
         if (isMoving == false)
         {
@@ -43,11 +47,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            //Debug.Log(targetPosition);
-            //Debug.DrawLine(rayShootPosition, targetPosition, Color.red);
-            //Debug.Log(Vector3.Distance(transform.position, targetPosition));
-            //Debug.Log(targetPosition + "     " + transform.position);
-            if (Vector3.Distance(transform.position, targetPosition) > 0.05f)
+            if (Vector3.Distance(transform.position, targetPosition) > 0.001f)
             {
                 transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
             }
@@ -82,27 +82,29 @@ public class Player : MonoBehaviour
     bool Move(int Direction)
     {
         rayShootPosition = transform.position;
-        rayShootPosition.y = 2;
+        rayShootPosition.y = 10;
         groundPosition = transform.position;
         groundPosition.y = -0.1f;
         groundPosition += VectorDirection(Direction);
         int countAbleBrick = 0;
 
-        while (!Physics.Raycast(rayShootPosition, groundPosition - rayShootPosition, Mathf.Infinity, wallLayer))
+        while (!Physics.Raycast(rayShootPosition, groundPosition - rayShootPosition, Mathf.Infinity, wallLayer) && countAbleBrick<100)
         {
             countAbleBrick++;
             groundPosition += VectorDirection(Direction);
-            //Debug.DrawRay(rayShootPosition, groundPosition - rayShootPosition, Color.red);
-            //Debug.Log(Physics.Raycast(rayShootPosition, groundPosition - rayShootPosition, Mathf.Infinity, wallLayer));
+            rayShootPosition += VectorDirection(Direction);
+            Debug.DrawLine(rayShootPosition, groundPosition, Color.red,3f);
+            
         }
 
 
         targetPosition = transform.position + VectorDirection(Direction) * countAbleBrick;
-        if(countAbleBrick!=0)
-        {
-            Debug.Log(countAbleBrick);
-        }
-        
+        //if(countAbleBrick!=0)
+        //{
+        //    Debug.Log(countAbleBrick);
+        //}
+
+        //Debug.Log(brickStack.Count);
         return countAbleBrick != 0;
     }
 
@@ -135,19 +137,56 @@ public class Player : MonoBehaviour
                 return forward;
         }
     }
+    IEnumerator WaitForNextSence(float durationTime)
+    {
+        yield return new WaitForSeconds(durationTime);
+        FindObjectOfType<GameManager>().NextLevel();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Brick")
         {
             other.transform.SetParent(transform);
-            transform.position += Vector3.up * 0.25f;
+            transform.position += Vector3.up * 0.3f;
             targetPosition.y = transform.position.y;
-            other.transform.position = transform.position - Vector3.up * 0.25f * brickStack.Count;
+            brickStack.Push(other);
+            other.transform.position = transform.position - Vector3.up * 0.3f * brickStack.Count;
             other.gameObject.tag = "Player";
             other.gameObject.GetComponent<Collider>().isTrigger = false;
             other.gameObject.layer = LayerMask.NameToLayer("Default");
-            brickStack.Push(1);
+            
+        }
+
+        if(other.gameObject.tag=="UnBrick")
+        {
+            if(brickStack.Count == 0)
+            {
+                isFinish = true;
+                targetPosition = transform.position;
+                FindObjectOfType<GameManager>().GameOver();
+                return;
+            }
+            transform.position -= Vector3.up * 0.3f;
+            targetPosition.y = transform.position.y;
+            Destroy(brickStack.Peek().gameObject);
+            brickStack.Pop();
+            other.gameObject.tag = "Untagged";
+        }
+
+        if (other.gameObject.tag == "Finish")
+        {
+            while(brickStack.Count > 1)
+            {
+                transform.position -= Vector3.up * 0.3f;
+                targetPosition.y = transform.position.y;
+                Destroy(brickStack.Peek().gameObject);
+                brickStack.Pop();
+            }
+            isFinish = true;
+            targetPosition = transform.position;
+
+            StartCoroutine(WaitForNextSence(3f));
         }
     }
 }

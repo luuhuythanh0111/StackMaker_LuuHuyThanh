@@ -8,7 +8,7 @@ public class CameraFollow : MonoBehaviour
     public Vector3 offset;
     public float smoothSpeed = 0.125f;
 
-    // Start is called before the first frame update
+    //Start is called before the first frame update
     private void LateUpdate()
     {
         Vector3 desiredPosition = target.position + offset;

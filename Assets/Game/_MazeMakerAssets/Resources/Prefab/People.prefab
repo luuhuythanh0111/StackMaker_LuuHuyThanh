@@ -6003,7 +6003,7 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1608873862797607}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -6222,11 +6222,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 207fd5674467c234292cfa2bb0931fdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  brickLayer:
+  wallLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 8
   targetPosition: {x: 0, y: 0, z: 0}
-  speed: 2
+  speed: 6
+  openChess: {fileID: 0}
 --- !u!1 &1723320838945368
 GameObject:
   m_ObjectHideFlags: 0
@@ -6364,7 +6365,7 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1780095133743106}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
