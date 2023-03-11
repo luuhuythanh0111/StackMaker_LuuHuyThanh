@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor.SceneManagement;
@@ -28,6 +28,7 @@ public class Player : MonoBehaviour
     private bool isMoving = false;
     private bool isFinish = false;
     private bool isMovingOnBridge = false;
+    private bool isMoveingAfterBridge = true;
 
     private int Direction = 4;
 
@@ -38,6 +39,7 @@ public class Player : MonoBehaviour
     
     IEnumerator WaitForStop()
     {
+        transform.position = targetPosition;
         yield return new WaitForSeconds(0.1f);
         isMoving = false;
     }
@@ -49,9 +51,14 @@ public class Player : MonoBehaviour
 
         if(isMovingOnBridge)
         {
-            isMoving = true;
             MoveOnBridge();
             return;
+        }
+
+        if(isMoveingAfterBridge==false)
+        {
+            Move(Direction);
+            isMoveingAfterBridge = true;
         }
 
 
@@ -67,13 +74,15 @@ public class Player : MonoBehaviour
         }
         else
         {
-            if (Vector3.Distance(transform.position, targetPosition) > 0.001f)
+            if (Vector3.Distance(transform.position, targetPosition) > 0.1f)
             {
                 transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
             }
             else
             {
-                StartCoroutine(WaitForStop());
+                //StartCoroutine(WaitForStop());
+                transform.position = targetPosition;
+                isMoving = false;
             }
         }
     }
@@ -102,7 +111,7 @@ public class Player : MonoBehaviour
     bool Move(int Direction)
     {
         rayShootPosition = transform.position;
-        rayShootPosition.y = 10;
+        rayShootPosition.y = 7;
         groundPosition = transform.position;
         groundPosition.y = -0f;
         groundPosition += VectorDirection(Direction);
@@ -119,8 +128,7 @@ public class Player : MonoBehaviour
                 isMovingOnBridge = true;
                 //UsedBridgePosition.Add(groundPosition);
                 Debug.DrawLine(rayShootPosition, groundPosition, Color.white, 5f);
-                targetPosition = transform.position + VectorDirection(Direction) * (countAbleBrick-1);
-                return true;
+                break;
             }
         }
 
@@ -133,7 +141,7 @@ public class Player : MonoBehaviour
     {
         for(int i=0; i<UsedBridgePosition.Count; i++)
         {
-            if (Vector3.Distance(UsedBridgePosition[i], position) < 0.1f) 
+            if (Vector3.Distance(UsedBridgePosition[i], position) < 0.01f) 
                 return true;
         }
 
@@ -141,11 +149,13 @@ public class Player : MonoBehaviour
     }
     void MoveOnBridge()
     {
-        if (Vector3.Distance(transform.position, targetPosition) > 0.001f)
+        if (Vector3.Distance(transform.position, targetPosition) > 0.01f)
         {
             transform.position = Vector3.MoveTowards(transform.position, targetPosition,2f * speed * Time.deltaTime);
             return;
         }
+
+        transform.position = targetPosition;
 
         for (int i = 0; i<4; i++)
         {
@@ -170,7 +180,6 @@ public class Player : MonoBehaviour
                 return;
             }
 
-            
         }
 
         for (int i = 0; i < 4; i++)
@@ -181,13 +190,16 @@ public class Player : MonoBehaviour
             groundPosition.y = -0f;
 
             groundPosition += VectorDirection(i);
-
+            Debug.DrawLine(rayShootPosition, groundPosition, Color.green, 5f);
             if (Physics.Raycast(rayShootPosition, groundPosition - rayShootPosition, Mathf.Infinity, groundLayer))
             {
-                Debug.DrawLine(rayShootPosition, groundPosition, Color.green, 5f);
+                
                 targetPosition = transform.position + VectorDirection(i);
                 isMovingOnBridge = false;
                 UsedBridgePosition.Clear();
+                Direction = i;
+                isMoveingAfterBridge = false;
+                Debug.Log("Di vao ground");
                 return;
             }
 
@@ -198,16 +210,31 @@ public class Player : MonoBehaviour
 
     private int GetMouseDirection()
     {
-        Vector3 currentMousePosition = Input.mousePosition;
-        if (previousMousePosition.x == 0)
+       
+        if (Input.GetMouseButtonDown(0))
         {
-            previousMousePosition = currentMousePosition;
+            previousMousePosition = Input.mousePosition;
+        }
+
+        Vector3 currentMousePosition = new Vector3();
+        if (Input.GetMouseButtonUp(0))
+        {
+            currentMousePosition = Input.mousePosition;
+        }
+
+        if (previousMousePosition.x == 0.0f)
+        {
+            return 4;
+        }
+
+        if (currentMousePosition.x == 0.0f)
+        { 
             return 4;
         }
 
         float denta_X = currentMousePosition.x - previousMousePosition.x;
         float denta_Y = currentMousePosition.y - previousMousePosition.y;
-        previousMousePosition = currentMousePosition;
+        
         if (Mathf.Abs(denta_X) <= 20f && Mathf.Abs(denta_Y) <= 20f)
             return stay;
         if (Mathf.Abs(denta_X) > Mathf.Abs(denta_Y) + 0.1f)
@@ -224,7 +251,7 @@ public class Player : MonoBehaviour
             else
                 return forward;
         }
-    }
+    } ///sửa lại thành vuốt
     IEnumerator WaitForNextSence(float durationTime)
     {
         yield return new WaitForSeconds(durationTime);
