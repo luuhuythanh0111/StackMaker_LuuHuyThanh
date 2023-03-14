@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 4613131694726993}
   - component: {fileID: 33132717134260130}
   - component: {fileID: 23110656309031825}
-  m_Layer: 0
+  - component: {fileID: 5522011872910277496}
+  m_Layer: 6
   m_Name: dimian
-  m_TagString: Untagged
+  m_TagString: Brick
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -49,7 +50,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1044362667059755}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -83,6 +84,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &5522011872910277496
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1044362667059755}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.0000002, y: 1.0000005, z: 0.2998983}
+  m_Center: {x: 0.0000060945763, y: -0.0000002384187, z: 0.14994933}
 --- !u!1 &1044886705902474
 GameObject:
   m_ObjectHideFlags: 0
@@ -123,7 +137,7 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1044886705902474}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -180,6 +194,7 @@ GameObject:
   - component: {fileID: 4447324368405745}
   - component: {fileID: 33916434670274277}
   - component: {fileID: 23962809945305158}
+  - component: {fileID: 4692363530024999078}
   m_Layer: 0
   m_Name: di
   m_TagString: Untagged
@@ -218,7 +233,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1171122799541128}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -252,6 +267,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &4692363530024999078
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1171122799541128}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.9999993, y: 1.0000017, z: 1.0000031}
+  m_Center: {x: 0.0000010728838, y: 0.00000059604673, z: 3.1763738e-21}
 --- !u!1 &1335394330515411
 GameObject:
   m_ObjectHideFlags: 0
@@ -330,7 +358,7 @@ GameObject:
   - component: {fileID: 65756203679023892}
   m_Layer: 0
   m_Name: zhuanjiao
-  m_TagString: Untagged
+  m_TagString: Push
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

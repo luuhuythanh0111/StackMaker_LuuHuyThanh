@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] GameObject levelComplete;
+    [SerializeField] GameObject scoreText;
 
     public void RestartLevel()
     {
@@ -14,6 +15,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadingNextLevel()
     {
+        scoreText.SetActive(false);
         levelComplete.SetActive(true);
     }
 

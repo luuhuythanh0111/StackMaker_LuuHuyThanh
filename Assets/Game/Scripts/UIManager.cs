@@ -14,9 +14,16 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] Text scoreText;
 
+    [SerializeField] Text lastScoreText;
+
     public void SetScore(int score)
     {
-        scoreText.text = "Score : " + score.ToString();
+        scoreText.text = score.ToString();
+    }
+
+    public void SetLastScore(int lastScore)
+    {
+        lastScoreText.text = lastScore.ToString();
     }
 
 }

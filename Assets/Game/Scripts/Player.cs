@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     private const int back = 3;
     private const int stay = 4;
 
+
     private Stack <Collider> brickStack = new Stack<Collider>();
 
     private Vector3 previousMousePosition = new Vector3(0, 0, 0);
@@ -33,7 +34,7 @@ public class Player : MonoBehaviour
     private int Direction = 4;
     private int score = 0;
 
-    private void Awake()
+    private void Start()
     {
         UIManager.instance.SetScore(score);
     }
@@ -65,11 +66,11 @@ public class Player : MonoBehaviour
 
         if (isMoving == false)
         {
-            Direction = GetMouseDirection();
+            int getDirection = GetMouseDirection();
 
-
-            if (Direction != 4)
+            if (getDirection != 4)
             {
+                Direction = getDirection;
                 isMoving = Move(Direction);
             }
         }
@@ -148,6 +149,7 @@ public class Player : MonoBehaviour
 
         return false;
     }
+
     void MoveOnBridge()
     {
         if (Vector3.Distance(transform.position, targetPosition) > 0.01f)
@@ -200,7 +202,7 @@ public class Player : MonoBehaviour
                 UsedBridgePosition.Clear();
                 Direction = i;
                 isMoveingAfterBridge = false;
-                Debug.Log("Di vao ground");
+                //Debug.Log("Di vao ground");
                 return;
             }
 
@@ -253,9 +255,11 @@ public class Player : MonoBehaviour
                 return forward;
         }
     }
+
     IEnumerator EndLevel(float durationTime)
     {
         yield return new WaitForSeconds(durationTime);
+        UIManager.instance.SetLastScore(score);
         FindObjectOfType<GameManager>().LoadingNextLevel();
     }
 
@@ -307,5 +311,32 @@ public class Player : MonoBehaviour
 
             StartCoroutine(EndLevel(1f));
         }
+
     }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Push")
+        {
+            isMoving = true;
+            if (Vector3.Distance(transform.position, targetPosition) < 0.1)
+            {
+                Debug.Log(Direction);
+                for (int i = 0; i < 4; i++)
+                {
+                    if (i == left && Direction == right) continue;
+                    if (i == right && Direction == left) continue;
+                    if (i == forward && Direction == back) continue;
+                    if (i == back && Direction == forward) continue;
+
+                    if (Move(i))
+                    {
+                        Direction = i;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
 }
