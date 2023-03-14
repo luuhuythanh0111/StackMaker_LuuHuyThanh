@@ -31,12 +31,13 @@ public class Player : MonoBehaviour
     private bool isMoveingAfterBridge = true;
 
     private int Direction = 4;
+    private int score = 0;
 
-    void Start()
+    private void Awake()
     {
-        
+        UIManager.instance.SetScore(score);
     }
-    
+
     IEnumerator WaitForStop()
     {
         transform.position = targetPosition;
@@ -251,11 +252,11 @@ public class Player : MonoBehaviour
             else
                 return forward;
         }
-    } ///sửa lại thành vuốt
-    IEnumerator WaitForNextSence(float durationTime)
+    }
+    IEnumerator EndLevel(float durationTime)
     {
         yield return new WaitForSeconds(durationTime);
-        FindObjectOfType<GameManager>().NextLevel();
+        FindObjectOfType<GameManager>().LoadingNextLevel();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -270,6 +271,8 @@ public class Player : MonoBehaviour
             other.gameObject.tag = "Player";
             other.gameObject.GetComponent<Collider>().isTrigger = false;
             other.gameObject.layer = LayerMask.NameToLayer("Default");
+            score++;
+            UIManager.instance.SetScore(score);
             
         }
 
@@ -302,7 +305,7 @@ public class Player : MonoBehaviour
             isFinish = true;
             targetPosition = transform.position;
 
-            StartCoroutine(WaitForNextSence(3f));
+            StartCoroutine(EndLevel(1f));
         }
     }
 }
