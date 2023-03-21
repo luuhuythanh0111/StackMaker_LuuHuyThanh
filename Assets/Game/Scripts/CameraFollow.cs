@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
@@ -11,7 +9,7 @@ public class CameraFollow : MonoBehaviour
     //Start is called before the first frame update
     private void LateUpdate()
     {
-        Vector3 vel = Vector3.zero ;
+        Vector3 vel = Vector3.zero;
         Vector3 desiredPosition = target.position + offset;
         Vector3 smoothedPosition = Vector3.SmoothDamp(transform.position, desiredPosition, ref vel, smoothSpeed);
         transform.position = smoothedPosition;
@@ -22,6 +20,6 @@ public class CameraFollow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
