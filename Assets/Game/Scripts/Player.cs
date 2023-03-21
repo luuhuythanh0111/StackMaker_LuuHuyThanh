@@ -52,17 +52,16 @@ public class Player : MonoBehaviour
     }
     void Update()
     {
-        //Debug.Log(isMoving);
-
         if(isFinish) return;
 
-        Debug.Log(isTeleport);
         if(isPressedReturn == false)
         { 
             if (isTeleport)
             {
-                TeleportMove(); 
-                return;
+                if (TeleportMove())
+                {
+                    return;
+                }
             }
         }
 
@@ -85,7 +84,6 @@ public class Player : MonoBehaviour
 
             if (getDirection != 4)
             {
-                isPressedReturn = false;
                 Direction = getDirection;
                 isMoving = Move(Direction);
             }
@@ -95,6 +93,7 @@ public class Player : MonoBehaviour
             if (Vector3.Distance(transform.position, targetPosition) > 0.1f)
             {
                 transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
+                isPressedReturn = false;
             }
             else
             {
@@ -151,7 +150,6 @@ public class Player : MonoBehaviour
         }
 
         targetPosition = transform.position + VectorDirection(Direction) * countAbleBrick;
-        
         return countAbleBrick != 0;
     }
 
@@ -279,8 +277,10 @@ public class Player : MonoBehaviour
         FindObjectOfType<GameManager>().LoadingNextLevel();
     }
 
-    private void TeleportMove()
+    private bool TeleportMove()
     {
+        if (Vector3.Distance(transform.position, targetPosition) > 0.1f)
+            return false;
         if (Input.GetMouseButtonDown(0))
         {
             indexTeleport++;
@@ -289,7 +289,7 @@ public class Player : MonoBehaviour
                 indexTeleport = 0;
             }
             MainCamera.GetComponent<CameraFollow>().target = teleportGameObject[indexTeleport].transform;
-            return;
+            return true;
         }
 
         if (Input.GetKeyDown(KeyCode.Return))
@@ -301,9 +301,10 @@ public class Player : MonoBehaviour
             isMoving = false;
             isTeleport = false;
             isPressedReturn = true;
-            return;
+            return true;
         }
 
+        return true;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -354,17 +355,6 @@ public class Player : MonoBehaviour
 
             StartCoroutine(EndLevel(1f));
         }
-
-        if (other.gameObject.tag == "Teleport")
-        {
-            other.gameObject.tag = "UnTeleport";
-            isTeleport = true;
-            if (Vector3.Distance(transform.position, targetPosition) < 0.1)
-            {
-                
-            }
-        }
-
     }
 
 
@@ -391,14 +381,23 @@ public class Player : MonoBehaviour
             }
         }
 
-        
+        if (other.gameObject.tag == "Teleport")
+        {
+            if (Vector3.Distance(transform.position, targetPosition) < 0.1)
+            {
+                Debug.Log(other.gameObject.tag);
+                isTeleport = true;
+            }
+
+        }
+
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.tag == "UnTeleport")
+        if (other.gameObject.tag == "Teleport")
         {
-            other.gameObject.tag = "Teleport";
+            isTeleport = false;
         }
     }
 }
