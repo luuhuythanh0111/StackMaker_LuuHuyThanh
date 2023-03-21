@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] private List<GameObject> teleportGameObject = new List<GameObject>();
+    [SerializeField] private GameObject MainCamera;
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private LayerMask unBrickLayer;
     [SerializeField] private LayerMask groundLayer;
@@ -30,7 +32,10 @@ public class Player : MonoBehaviour
     private bool isFinish = false;
     private bool isMovingOnBridge = false;
     private bool isMoveingAfterBridge = true;
+    private bool isTeleport = false;
+    private bool isPressedReturn = false;
 
+    private int indexTeleport = 0;
     private int Direction = 4;
     private int score = 0;
 
@@ -51,6 +56,16 @@ public class Player : MonoBehaviour
 
         if(isFinish) return;
 
+        Debug.Log(isTeleport);
+        if(isPressedReturn == false)
+        { 
+            if (isTeleport)
+            {
+                TeleportMove(); 
+                return;
+            }
+        }
+
         if(isMovingOnBridge)
         {
             MoveOnBridge();
@@ -70,6 +85,7 @@ public class Player : MonoBehaviour
 
             if (getDirection != 4)
             {
+                isPressedReturn = false;
                 Direction = getDirection;
                 isMoving = Move(Direction);
             }
@@ -263,6 +279,33 @@ public class Player : MonoBehaviour
         FindObjectOfType<GameManager>().LoadingNextLevel();
     }
 
+    private void TeleportMove()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            indexTeleport++;
+            if (indexTeleport > teleportGameObject.Count-1)
+            {
+                indexTeleport = 0;
+            }
+            MainCamera.GetComponent<CameraFollow>().target = teleportGameObject[indexTeleport].transform;
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            transform.position = new Vector3(teleportGameObject[indexTeleport].transform.position.x,
+                                             transform.position.y,
+                                             teleportGameObject[indexTeleport].transform.position.z);
+            targetPosition = transform.position;
+            isMoving = false;
+            isTeleport = false;
+            isPressedReturn = true;
+            return;
+        }
+
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Brick")
@@ -312,7 +355,18 @@ public class Player : MonoBehaviour
             StartCoroutine(EndLevel(1f));
         }
 
+        if (other.gameObject.tag == "Teleport")
+        {
+            other.gameObject.tag = "UnTeleport";
+            isTeleport = true;
+            if (Vector3.Distance(transform.position, targetPosition) < 0.1)
+            {
+                
+            }
+        }
+
     }
+
 
     private void OnTriggerStay(Collider other)
     {
@@ -321,7 +375,6 @@ public class Player : MonoBehaviour
             isMoving = true;
             if (Vector3.Distance(transform.position, targetPosition) < 0.1)
             {
-                Debug.Log(Direction);
                 for (int i = 0; i < 4; i++)
                 {
                     if (i == left && Direction == right) continue;
@@ -337,6 +390,15 @@ public class Player : MonoBehaviour
                 }
             }
         }
+
+        
     }
 
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "UnTeleport")
+        {
+            other.gameObject.tag = "Teleport";
+        }
+    }
 }

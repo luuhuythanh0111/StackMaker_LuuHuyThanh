@@ -7,6 +7,8 @@ TagManager:
   - Brick
   - UnBrick
   - Push
+  - Teleport
+  - UnTeleport
   layers:
   - Default
   - TransparentFX

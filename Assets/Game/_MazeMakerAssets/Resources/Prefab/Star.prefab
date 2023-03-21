@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 4247774224176084}
   - component: {fileID: 33786289007104317}
   - component: {fileID: 23070668770009708}
+  - component: {fileID: 2093520275045181214}
   m_Layer: 0
   m_Name: Star
-  m_TagString: Untagged
+  m_TagString: Teleport
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -83,3 +84,16 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &2093520275045181214
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1786091550555937}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.8716622, y: 0.35127702, z: 0.8669315}
+  m_Center: {x: 0, y: -0.00000008940697, z: 0}
